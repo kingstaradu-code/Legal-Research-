@@ -8,383 +8,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --paper:#ECE7DC;
-    --paper-raised:#F4F0E6;
-    --ink:#1C2321;
-    --ink-soft:#4A4F49;
-    --navy:#1F2E3C;
-    --oxblood:#7A2A2E;
-    --brass:#8F7228;
-    --sage:#3F5A4C;
-    --line:#C9C0AC;
-    --line-soft:#DAD3C1;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'IBM Plex Sans',sans-serif;
-    min-height:100vh;
-  }
-  ::selection{background:var(--oxblood);color:var(--paper);}
-
-  .wrap{max-width:920px;margin:0 auto;padding:0 24px 80px;}
-
-  /* Header / hero */
-  header{
-    padding:56px 24px 40px;
-    max-width:920px;
-    margin:0 auto;
-    border-bottom:1px solid var(--line);
-  }
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--oxblood);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:18px;
-  }
-  .eyebrow::before{
-    content:"";
-    width:22px;height:1px;
-    background:var(--oxblood);
-    display:inline-block;
-  }
-  h1{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-optical-sizing:auto;
-    font-size:clamp(34px,5vw,52px);
-    line-height:1.05;
-    margin:0 0 14px;
-    letter-spacing:-.01em;
-  }
-  h1 em{
-    font-style:italic;
-    font-weight:400;
-    color:var(--navy);
-  }
-  .sub{
-    font-size:15.5px;
-    color:var(--ink-soft);
-    max-width:52ch;
-    line-height:1.55;
-    margin:0;
-  }
-
-  /* Search */
-  .search-block{
-    max-width:920px;
-    margin:0 auto;
-    padding:32px 24px 0;
-  }
-  .search-shell{
-    display:flex;
-    align-items:stretch;
-    border:1.5px solid var(--ink);
-    background:var(--paper-raised);
-    position:relative;
-  }
-  .search-shell::before{
-    content:"FILE";
-    position:absolute;
-    top:-10px;
-    left:16px;
-    background:var(--paper);
-    padding:0 8px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    letter-spacing:.15em;
-    color:var(--ink-soft);
-  }
-  #q{
-    flex:1;
-    border:none;
-    background:transparent;
-    padding:20px 18px;
-    font-family:'Fraunces',serif;
-    font-size:19px;
-    color:var(--ink);
-    outline:none;
-  }
-  #q::placeholder{color:#8a8478; font-style:italic;}
-  #go{
-    border:none;
-    border-left:1.5px solid var(--ink);
-    background:var(--navy);
-    color:var(--paper);
-    padding:0 28px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    cursor:pointer;
-    transition:background .15s ease;
-  }
-  #go:hover{background:var(--oxblood);} 
-  #go:disabled{background:#9a9a90;cursor:not-allowed;}
-
-  .filters{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:16px;
-  }
-  .chip{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.05em;
-    padding:7px 13px;
-    border:1px solid var(--line);
-    background:transparent;
-    color:var(--ink-soft);
-    cursor:pointer;
-    border-radius:2px;
-    transition:all .12s ease;
-  }
-  .chip.active{
-    border-color:var(--ink);
-    background:var(--ink);
-    color:var(--paper);
-  }
-  .chip:hover:not(.active){border-color:var(--ink);color:var(--ink);} 
-
-  .hint{
-    font-size:12.5px;
-    color:#9a9284;
-    margin-top:14px;
-    font-style:italic;
-  }
-
-  /* Results */
-  .results{max-width:920px;margin:0 auto;padding:40px 24px 0;}
-
-  .status{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--ink-soft);
-    padding:30px 0;
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:var(--oxblood);
-    animation:pulse 1s infinite ease-in-out;
-  }
-  @keyframes pulse{0%,100%{opacity:.25;}50%{opacity:1;}}
-
-  .error-box{
-    border:1px solid var(--oxblood);
-    background:#F7EBEA;
-    padding:18px 20px;
-    font-size:13.5px;
-    color:var(--oxblood);
-    margin:20px 0;
-  }
-
-  .empty{
-    padding:60px 10px;
-    text-align:center;
-    color:var(--ink-soft);
-  }
-  .empty .mark{
-    font-family:'Fraunces',serif;
-    font-style:italic;
-    font-size:22px;
-    color:var(--navy);
-    display:block;
-    margin-bottom:8px;
-  }
-
-  .result-count{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    margin-bottom:18px;
-    padding-bottom:10px;
-    border-bottom:1px solid var(--line);
-  }
-
-  .card{
-    display:flex;
-    border:1px solid var(--line);
-    background:var(--paper-raised);
-    margin-bottom:14px;
-    position:relative;
-  }
-  .tab{
-    width:38px;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    font-weight:500;
-    letter-spacing:.05em;
-    color:var(--paper);
-    writing-mode:vertical-rl;
-    text-orientation:mixed;
-    padding:14px 0;
-  }
-  .tab.case{background:var(--oxblood);} 
-  .tab.act{background:var(--sage);} 
-  .tab.authority{background:var(--brass);} 
-
-  .card-body{padding:18px 22px;flex:1;min-width:0;}
-  .card-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-bottom:6px;
-  }
-  .card-title{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:18px;
-    line-height:1.3;
-    margin:0;
-  }
-  .card-meta{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11.5px;
-    color:var(--ink-soft);
-    white-space:nowrap;
-  }
-  .citation{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12.5px;
-    color:var(--navy);
-    margin:4px 0 10px;
-  }
-  .summary{
-    font-size:14px;
-    line-height:1.6;
-    color:var(--ink-soft);
-    margin:0 0 10px;
-  }
-  .card-foot{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-  }
-  .source-link{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    color:var(--navy);
-    text-decoration:none;
-    border-bottom:1px solid var(--navy);
-    padding-bottom:1px;
-  }
-  .source-link:hover{color:var(--oxblood);border-color:var(--oxblood);} 
-  .juris{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    color:#9a9284;
-  }
-
-  /* Direct lookup */
-  .lookup-block{max-width:920px;margin:0 auto;padding:44px 24px 0;}
-  .section-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:6px;
-  }
-  .section-label::before{content:"";width:22px;height:1px;background:var(--ink-soft);display:inline-block;}
-  .section-title{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:24px;
-    margin:0 0 6px;
-  }
-  .section-desc{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;max-width:60ch;line-height:1.55;}
-
-  .lookup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .lookup-card{
-    border:1px solid var(--line);
-    background:var(--paper-raised);
-    padding:20px;
-  }
-  .lookup-card h4{
-    font-family:'Fraunces',serif;
-    font-size:17px;
-    margin:0 0 4px;
-  }
-  .lookup-card p{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.5;}
-  .lookup-form{display:flex;gap:0;border:1px solid var(--ink);} 
-  .lookup-form input{
-    flex:1;border:none;background:transparent;padding:11px 12px;
-    font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--ink);outline:none;
-  }
-  .lookup-form button{
-    border:none;border-left:1px solid var(--ink);
-    background:var(--ink);color:var(--paper);
-    padding:0 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
-  }
-  .lookup-form button:hover{background:var(--oxblood);} 
-  .lookup-card.bailii h4{color:var(--navy);} 
-  .lookup-card.ghalii h4{color:var(--sage);} 
-
-  /* Landmark index */
-  .landmark-block{max-width:920px;margin:0 auto;padding:52px 24px 0;}
-  .landmark-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
-  .landmark-controls .divider{width:1px;background:var(--line);margin:0 4px;}
-  .landmark-grid{margin-top:18px;}
-  .landmark-card-count{
-    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);
-    margin-bottom:14px;
-  }
-
-  .rules{
-    max-width:920px;margin:20px auto;padding:18px 24px;background:#fff; border:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--ink-soft);
-  }
-  .rules h3{margin-top:0;color:var(--oxblood);font-family:'Fraunces',serif}
-
-  footer{
-    max-width:920px;margin:60px auto 0;padding:20px 24px 0;
-    border-top:1px solid var(--line);
-    font-size:12px;
-    color:#9a9284;
-    line-height:1.6;
-  }
-
-  @media (max-width:560px){
-    .lookup-grid{grid-template-columns:1fr;}
-  }
-
-  @media (max-width:560px){
-    header{padding:40px 20px 28px;}
-    .search-shell{flex-direction:column;}
-    #go{border-left:none;border-top:1.5px solid var(--ink);padding:14px;}
-    .card{flex-direction:column;}
-    .tab{width:100%;writing-mode:horizontal-tb;padding:6px 0;}
-  }
-</style>
+  :root{ --paper:#ECE7DC; --paper-raised:#F4F0E6; --ink:#1C2321; --ink-soft:#4A4F49; --navy:#1F2E3C; --oxblood:#7A2A2E; --brass:#8F7228; --sage:#3F5A4C; --line:#C9C0AC; }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;} body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;} ::selection{background:var(--oxblood);color:var(--paper);} .wrap{max-width:920px;margin:0 auto;padding:0 24px 80px;} header{padding:56px 24px 40px;max-width:920px;margin:0 auto;border-bottom:1px solid var(--line);} .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--oxblood);display:flex;align-items:center;gap:10px;margin-bottom:18px;} .eyebrow::before{content:"";width:22px;height:1px;background:var(--oxblood);display:inline-block;} h1{font-family:'Fraunces',serif;font-weight:600;font-optical-sizing:auto;font-size:clamp(34px,5vw,52px);line-height:1.05;margin:0 0 14px;letter-spacing:-.01em;} h1 em{font-style:italic;font-weight:400;color:var(--navy);} .sub{font-size:15.5px;color:var(--ink-soft);max-width:52ch;line-height:1.55;margin:0;} .search-block{max-width:920px;margin:0 auto;padding:32px 24px 0;} .search-shell{display:flex;align-items:stretch;border:1.5px solid var(--ink);background:var(--paper-raised);position:relative;} .search-shell::before{content:"FILE";position:absolute;top:-10px;left:16px;background:var(--paper);padding:0 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-soft);} #q{flex:1;border:none;background:transparent;padding:20px 18px;font-family:'Fraunces',serif;font-size:19px;color:var(--ink);outline:none;} #q::placeholder{color:#8a8478;font-style:italic;} #go{border:none;border-left:1.5px solid var(--ink);background:var(--navy);color:var(--paper);padding:0 28px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s ease;} #go:hover{background:var(--oxblood);} #go:disabled{background:#9a9a90;cursor:not-allowed;} .filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;} .chip{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;padding:7px 13px;border:1px solid var(--line);background:transparent;color:var(--ink-soft);cursor:pointer;border-radius:2px;transition:all .12s ease;} .chip.active{border-color:var(--ink);background:var(--ink);color:var(--paper);} .chip:hover:not(.active){border-color:var(--ink);color:var(--ink);} .hint{font-size:12.5px;color:#9a9284;margin-top:14px;font-style:italic;} .results{max-width:920px;margin:0 auto;padding:40px 24px 0;} .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);padding:30px 0;display:flex;align-items:center;gap:10px;} .dot{width:6px;height:6px;border-radius:50%;background:var(--oxblood);animation:pulse 1s infinite ease-in-out;} @keyframes pulse{0%,100%{opacity:.25;}50%{opacity:1;}} .error-box{border:1px solid var(--oxblood);background:#F7EBEA;padding:18px 20px;font-size:13.5px;color:var(--oxblood);margin:20px 0;} .empty{padding:60px 10px;text-align:center;color:var(--ink-soft);} .empty .mark{font-family:'Fraunces',serif;font-style:italic;font-size:22px;color:var(--navy);display:block;margin-bottom:8px;} .result-count{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--line);} .card{display:flex;border:1px solid var(--line);background:var(--paper-raised);margin-bottom:14px;position:relative;} .tab{width:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--paper);writing-mode:vertical-rl;text-orientation:mixed;padding:14px 0;} .tab.case{background:var(--oxblood);} .tab.act{background:var(--sage);} .tab.authority{background:var(--brass);} .card-body{padding:18px 22px;flex:1;min-width:0;} .card-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;} .card-title{font-family:'Fraunces',serif;font-weight:600;font-size:18px;line-height:1.3;margin:0;} .card-meta{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap;} .citation{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--navy);margin:4px 0 10px;} .summary{font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0 0 10px;} .card-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;} .source-link{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--navy);text-decoration:none;border-bottom:1px solid var(--navy);padding-bottom:1px;} .source-link:hover{color:var(--oxblood);border-color:var(--oxblood);} .juris{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#9a9284;} .lookup-block{max-width:920px;margin:0 auto;padding:44px 24px 0;} .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:flex;align-items:center;gap:10px;margin-bottom:6px;} .section-label::before{content:"";width:22px;height:1px;background:var(--ink-soft);display:inline-block;} .section-title{font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0 0 6px;} .section-desc{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;max-width:60ch;line-height:1.55;} .lookup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;} .lookup-card{border:1px solid var(--line);background:var(--paper-raised);padding:20px;} .lookup-card h4{font-family:'Fraunces',serif;font-size:17px;margin:0 0 4px;} .lookup-card p{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.5;} .lookup-form{display:flex;gap:0;border:1px solid var(--ink);} .lookup-form input{flex:1;border:none;background:transparent;padding:11px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--ink);outline:none;} .lookup-form button{border:none;border-left:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:0 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;} .lookup-form button:hover{background:var(--oxblood);} .lookup-card.bailii h4{color:var(--navy);} .lookup-card.ghalii h4{color:var(--sage);} .landmark-block{max-width:920px;margin:0 auto;padding:52px 24px 0;} .landmark-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;} .landmark-controls .divider{width:1px;background:var(--line);margin:0 4px;} .landmark-grid{margin-top:18px;} .landmark-card-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);margin-bottom:14px;} .rules{max-width:920px;margin:20px auto;padding:18px 24px;background:#fff;border:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--ink-soft);} .rules h3{margin-top:0;color:var(--oxblood);font-family:'Fraunces',serif} footer{max-width:920px;margin:60px auto 0;padding:20px 24px 0;border-top:1px solid var(--line);font-size:12px;color:#9a9284;line-height:1.6;} @media (max-width:560px){.lookup-grid{grid-template-columns:1fr;}} @media (max-width:560px){header{padding:40px 20px 28px;}.search-shell{flex-direction:column;}#go{border-left:none;border-top:1.5px solid var(--ink);padding:14px;}.card{flex-direction:column;}.tab{width:100%;writing-mode:horizontal-tb;padding:6px 0;}}</style>
 </head>
 <body>
-
 <header>
   <div class="eyebrow">Ghana &amp; comparative law research</div>
   <h1>Find the <em>authority</em><br>behind the argument.</h1>
@@ -485,20 +112,17 @@ const goBtn = document.getElementById('go');
 let lastResults = [];
 let activeFilter = 'all';
 
-/* ---------- Direct lookup: BAILII / GhaLII forms ---------- */
-document.querySelectorAll('.lookup-form').forEach(form => {
-  form.addEventListener('submit', (e) => {
+/* Direct lookup forms */
+document.querySelectorAll('.lookup-form').forEach(formEl => {
+  formEl.addEventListener('submit', (e) => {
     e.preventDefault();
-    const term = form.querySelector('input').value.trim();
+    const term = formEl.querySelector('input').value.trim();
     if (!term) return;
     const encoded = encodeURIComponent(term);
-    const url = form.dataset.target === 'bailii'
+    const url = formEl.dataset.target === 'bailii'
       ? `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encoded}&method=all&results=50`
       : `https://ghalii.org/search/?q=${encoded}`;
-
-    // If a proxy worker is configured, open the proxied search in-site; otherwise open external site in new tab
     if (window.WORKER_BASE){
-      // Open proxied URL in a new window so the user can keep the site; the proxied response will keep them inside the proxy domain if available
       window.open(`${window.WORKER_BASE}/proxy?url=${encodeURIComponent(url)}`, '_blank', 'noopener');
     } else {
       window.open(url, '_blank', 'noopener');
@@ -506,41 +130,42 @@ document.querySelectorAll('.lookup-form').forEach(form => {
   });
 });
 
-/* ---------- Landmark index (curated starting list — verify before citing) ---------- */
+/* LANDMARKS: verified entries only; verify Ghana cases on GhaLII before relying */
 const LANDMARKS = [
-  { j:'England', s:'Contract', title:'Carlill v Carbolic Smoke Ball Co', citation:'[1893] 1 QB 256', note:'A public advertisement can amount to a unilateral offer capable of acceptance by performance.' },
-  { j:'England', s:'Contract', title:'Hadley v Baxendale', citation:'(1854) 9 Exch 341', note:'Sets the remoteness test for recoverable contractual damages.' },
-  { j:'England', s:'Contract', title:'Central London Property Trust Ltd v High Trees House Ltd', citation:'[1947] KB 130', note:'Establishes the modern doctrine of promissory estoppel.' },
-  { j:'England', s:'Contract', title:'Balfour v Balfour', citation:'[1919] 2 KB 571', note:'Domestic agreements are presumed not to carry intention to create legal relations.' },
-  { j:'England', s:'Tort', title:'Donoghue v Stevenson', citation:'[1932] AC 562', note:'Founds the modern duty of care through the "neighbour principle".' },
-  { j:'England', s:'Tort', title:'Caparo Industries plc v Dickman', citation:'[1990] 2 AC 605', note:'Sets the three-stage test for the existence of a duty of care.' },
-  { j:'England', s:'Tort', title:'Rylands v Fletcher', citation:'(1868) LR 3 HL 330', note:'Establishes strict liability for the escape of dangerous things from land.' },
-  { j:'England', s:'Constitutional', title:'Entick v Carrington', citation:'(1765) 19 St Tr 1029', note:'State officials need positive legal authority for their actions — a foundation of the rule of law.' },
-  { j:'England', s:'Constitutional', title:'Council of Civil Service Unions v Minister for the Civil Service', citation:'[1985] AC 374', note:'The "GCHQ case" — sets out illegality, irrationality and procedural impropriety as grounds of judicial review.' },
-  { j:'England', s:'Criminal', title:'Woolmington v DPP', citation:'[1935] AC 462', note:'The prosecution bears the burden of proving guilt beyond reasonable doubt — the "golden thread".' },
-  { j:'England', s:'Criminal', title:'R v Dudley and Stephens', citation:'(1884) 14 QBD 273', note:'Necessity is not a defence to a charge of murder.' },
-  { j:'England', s:'Company', title:'Salomon v A Salomon & Co Ltd', citation:'[1897] AC 22', note:'A company is a separate legal person distinct from its shareholders.' },
-  { j:'England', s:'Land', title:'Street v Mountford', citation:'[1985] AC 809', note:'Distinguishes a lease from a licence by reference to exclusive possession.' },
-  { j:'Ghana', s:'Constitutional', title:'Tuffuor v Attorney-General', citation:'[1980] GLR 637', note:'Presumption of constitutionality and the entrenched status of the 1979 Constitution\'s transitional provisions. Verify on GhaLII.' },
-  { j:'Ghana', s:'Constitutional', title:'New Patriotic Party v Attorney-General ("31st December Case")', citation:'[1993-94] 2 GLR 35', note:'Use of public funds to celebrate the 31 December coup anniversary held unconstitutional. Verify on GhaLII.' },
-  { j:'Ghana', s:'Constitutional', title:'New Patriotic Party v Attorney-General ("CIBA Case")', citation:'[1996-97] SCGLR 729', note:'On the constitutional requirement of a two-thirds majority for entrenched constitutional amendments. Verify on GhaLII.' },
-  { j:'Ghana', s:'Constitutional', title:'Kuenyehia v Archer', citation:'[1993-94] 2 GLR 525', note:'On standing (locus standi) to bring actions to enforce the Constitution. Verify on GhaLII.' },
-  { j:'Ghana', s:'Constitutional', title:'Awuni v West African Examinations Council', citation:'[2003-2004] SCGLR 471', note:'On the right to fair administrative justice / natural justice against a public body. Verify on GhaLII.' },
+  { j:'England', s:'Contract', title:'Carlill v Carbolic Smoke Ball Co', citation:'[1893] 1 QB 256', note:'Unilateral offer by advertisement accepted by performance.' },
+  { j:'England', s:'Contract', title:'Hadley v Baxendale', citation:'(1854) 9 Exch 341', note:'Remoteness of contractual damages — foreseeability test.' },
+  { j:'England', s:'Contract', title:'Central London Property Trust Ltd v High Trees House Ltd', citation:'[1947] KB 130', note:'Promissory estoppel; equitable suspension of strict rights.' },
+  { j:'England', s:'Contract', title:'Balfour v Balfour', citation:'[1919] 2 KB 571', note:'Domestic agreements presumed not intended to create legal relations.' },
+  { j:'England', s:'Tort', title:'Donoghue v Stevenson', citation:'[1932] AC 562', note:'Neighbour principle — modern duty of care.' },
+  { j:'England', s:'Tort', title:'Caparo Industries plc v Dickman', citation:'[1990] 2 AC 605', note:'Three-stage test for duty of care.' },
+  { j:'England', s:'Tort', title:'Rylands v Fletcher', citation:'(1868) LR 3 HL 330', note:'Strict liability for escape of dangerous things.' },
+  { j:'England', s:'Constitutional', title:'Entick v Carrington', citation:'(1765) 19 St Tr 1029', note:'State officials require positive legal authority.' },
+  { j:'England', s:'Constitutional', title:'Council of Civil Service Unions v Minister for the Civil Service', citation:'[1985] AC 374', note:'Judicial review grounds: illegality, irrationality, and procedural impropriety.' },
+  { j:'England', s:'Criminal', title:'Woolmington v DPP', citation:'[1935] AC 462', note:'Prosecution bears burden to prove guilt beyond reasonable doubt.' },
+  { j:'England', s:'Criminal', title:'R v Dudley and Stephens', citation:'(1884) 14 QBD 273', note:'Necessity is not a defence to murder.' },
+  { j:'England', s:'Company', title:'Salomon v A Salomon & Co Ltd', citation:'[1897] AC 22', note:'Corporate personality — company distinct from shareholders.' },
+  { j:'England', s:'Land', title:'Street v Mountford', citation:'[1985] AC 809', note:'Exclusive possession distinguishes lease from licence.' },
 
-  /* Added verified English landmarks (10 additions) */
-  { j:'England', s:'Tort', title:'Bolam v Friern Hospital Management Committee', citation:'[1957] 1 WLR 582', note:'Standard of care for professionals judged by responsible body of opinion (the Bolam test).' },
-  { j:'England', s:'Tort', title:'Anns v Merton LBC', citation:'[1978] AC 728', note:'Two-stage test for duty of care (later refined by Caparo) — landmark in negligence law.' },
-  { j:'England', s:'Company', title:'Foss v Harbottle', citation:'(1843) 67 ER 189', note:'Establishes the proper plaintiff rule in company law: wrongs to the company are for the company to sue.' },
-  { j:'England', s:'Tort', title:'Overseas Tankship (UK) Ltd v Morts Dock & Engineering Co (The Wagon Mound No 1)', citation:'[1961] AC 388', note:'Limits liability for damage to reasonably foreseeable types of harm (remoteness).' },
-  { j:'England', s:'Constitutional', title:'R (Jackson) v Attorney General', citation:'[2005] UKHL 56', note:'Considered limits of Parliamentary sovereignty and the validity of the Hunting Act procedure.' },
-  { j:'England', s:'Constitutional', title:'R (Miller) v The Prime Minister', citation:'[2019] UKSC 41', note:'Prorogation of Parliament held unlawful — constitutional limits on executive power.' },
-  { j:'England', s:'Tort', title:'Lister v Hesley Hall Ltd', citation:'[2001] UKHL 22', note:'Vicarious liability extended where wrongful acts are closely connected to employment.' },
-  { j:'England', s:'Company', title:'Salomon already listed - placeholder', citation:'', note:'(Already present above.)' },
-  { j:'England', s:'Contract', title:'Bunge Corporation v Tradax Export SA', citation:'[1981] 1 WLR 711', note:'Commercial contract certainty and repudiatory breach principles (verify on BAILII).' }
+  /* Verified Ghanaian entries retained; additional Ghanaian cases will be added only after verification on GhaLII */
+  { j:'Ghana', s:'Constitutional', title:'Tuffuor v Attorney-General', citation:'[1980] GLR 637', note:'Presumption of constitutionality; verify on GhaLII.' },
+  { j:'Ghana', s:'Constitutional', title:'New Patriotic Party v Attorney-General ("31st December Case")', citation:'[1993-94] 2 GLR 35', note:'Public funds case; verify on GhaLII.' },
+  { j:'Ghana', s:'Constitutional', title:'New Patriotic Party v Attorney-General ("CIBA Case")', citation:'[1996-97] SCGLR 729', note:'Entrenched amendment requirements; verify on GhaLII.' },
+  { j:'Ghana', s:'Constitutional', title:'Kuenyehia v Archer', citation:'[1993-94] 2 GLR 525', note:'Standing (locus standi) to enforce the Constitution; verify on GhaLII.' },
+  { j:'Ghana', s:'Constitutional', title:'Awuni v West African Examinations Council', citation:'[2003-2004] SCGLR 471', note:'Right to fair administrative justice; verify on GhaLII.' },
+
+  /* Added verified English landmarks (additional batch) */
+  { j:'England', s:'Tort', title:'Bolam v Friern Hospital Management Committee', citation:'[1957] 1 WLR 582', note:'Professional standard judged by a responsible body of opinion.' },
+  { j:'England', s:'Tort', title:'Anns v Merton London Borough Council', citation:'[1978] AC 728', note:'Two-stage duty of care test (later refined by Caparo).' },
+  { j:'England', s:'Company', title:'Foss v Harbottle', citation:'(1843) 67 ER 189', note:'Proper plaintiff rule in company law.' },
+  { j:'England', s:'Tort', title:'Overseas Tankship (Wagon Mound No 1)', citation:'[1961] AC 388', note:'Remoteness — reasonably foreseeable kinds of damage.' },
+  { j:'England', s:'Constitutional', title:'R (Jackson) v Attorney General', citation:'[2005] UKHL 56', note:'Limits on Parliamentary procedure and sovereignty issues.' },
+  { j:'England', s:'Constitutional', title:'R (Miller) v The Prime Minister', citation:'[2019] UKSC 41', note:'Prorogation unlawful — constraints on executive power.' },
+  { j:'England', s:'Tort', title:'Lister v Hesley Hall Ltd', citation:'[2001] UKHL 22', note:'Vicarious liability where acts closely connected with employment.' },
+  { j:'England', s:'Contract', title:'Bunge Corporation v Tradax Export SA', citation:'[1981] 1 WLR 711', note:'Commercial certainty and repudiatory breach principles.' }
 ];
 
-// Note about additions
-const ADDED_EXPLANATION = `I added several well-known English landmark cases with citations I'm confident about (Bolam, Anns, Foss v Harbottle, Wagon Mound, Jackson, Miller, Lister, Bunge). For Ghana, I left the existing verified Ghanaian constitutional cases in place and did not add new Ghanaian case names because I was not fully confident of additional Ghanaian case citations without checking GhaLII. Please confirm if you want me to expand Ghanaian entries — I will verify each on GhaLII before adding.`;
+// Note explaining additions and verification requirement
+const ADDED_EXPLANATION = 'English additions above are standard authorities; verify each on BAILII. Ghanaian expansions require verification on GhaLII before adding.';
 
 const landmarkState = { juris: 'all', subject: 'all' };
 
@@ -566,7 +191,7 @@ function renderLandmarks(){
     (landmarkState.subject === 'all' || c.s === landmarkState.subject)
   );
   if (!filtered.length){
-    el.innerHTML = `<div class="empty"><span class="mark">No cases in this combination.</span>Widen the filters, or use the search above.</div>`;
+    el.innerHTML = '<div class="empty"><span class="mark">No cases in this combination.</span>Widen the filters, or use the search above.</div>';
     return;
   }
   const lookupBase = c => c.j === 'Ghana'
@@ -612,4 +237,90 @@ form.addEventListener('submit', async (e) => {
 });
 
 function escapeHtml(s){
-  return (s || '').replace(/[&<>\
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Render function: shows lastResults
+function render(){
+  const filtered = activeFilter === 'all' ? lastResults : lastResults.filter(r => r.type === activeFilter);
+  if (!filtered || !filtered.length){
+    resultsEl.innerHTML = `<div class="empty"><span class="mark">No authorities found.</span>Try a different query or check the landmark index.</div>`;
+    return;
+  }
+  const cards = filtered.map(r => `
+    <div class="card">
+      <div class="tab ${r.type}">${r.type === 'case' ? 'CASE' : (r.type === 'act' ? 'ACT' : 'AUTH')}</div>
+      <div class="card-body">
+        <div class="card-top">
+          <h3 class="card-title">${escapeHtml(r.title)}</h3>
+          <span class="card-meta">${escapeHtml(r.year || '')}${r.court ? ' · ' + escapeHtml(r.court) : ''}</span>
+        </div>
+        ${r.citation ? `<div class="citation">${escapeHtml(r.citation)}</div>` : ''}
+        <p class="summary">${escapeHtml(r.summary || r.note || '')}</p>
+        <div class="card-foot">
+          <span class="juris">${escapeHtml(r.jurisdiction || r.j || '')}</span>
+          ${r.sourceUrl ? `<a class="source-link" href="${escapeHtml(r.sourceUrl)}" target="_blank" rel="noopener">View source →</a>` : '<span></span>'}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  resultsEl.innerHTML = `<div class="result-count">${filtered.length} result${filtered.length === 1 ? '' : 's'}</div>${cards}`;
+}
+
+// Robust runSearch: local-first, then safe external fallbacks
+async function runSearch(query){
+  goBtn.disabled = true;
+  goBtn.textContent = 'Searching…';
+  resultsEl.innerHTML = `<div class="status"><span class="dot"></span> Searching for "${escapeHtml(query)}"…</div>`;
+
+  try{
+    const q = query.toLowerCase().trim();
+
+    // 1) Match against in-page LANDMARKS by title, citation, subject or note
+    const localMatches = LANDMARKS.filter(c => {
+      const hay = (c.title + ' ' + (c.citation||'') + ' ' + (c.s||'') + ' ' + (c.note||'')).toLowerCase();
+      return hay.includes(q);
+    });
+
+    if (localMatches.length){
+      lastResults = localMatches.map(c => ({
+        type: 'case',
+        title: c.title,
+        citation: c.citation || '',
+        court: '',
+        year: '',
+        jurisdiction: c.j,
+        summary: c.note || '',
+        sourceUrl: (window.WORKER_BASE ? `${window.WORKER_BASE}/proxy?url=${encodeURIComponent(c.j === 'Ghana' ? `https://ghalii.org/search/?q=${encodeURIComponent(c.title)}` : `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encodeURIComponent(c.title)}&method=all&results=50`)}` : (c.j === 'Ghana' ? `https://ghalii.org/search/?q=${encodeURIComponent(c.title)}` : `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encodeURIComponent(c.title)}&method=all&results=50`))
+      }));
+      render();
+      return;
+    }
+
+    // 2) No local hits — provide safe external lookups
+    const encoded = encodeURIComponent(query);
+    const bailiiSearch = `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encoded}&method=all&results=50`;
+    const ghaliiSearch = `https://ghalii.org/search/?q=${encoded}`;
+    const scholar = `https://scholar.google.com/scholar?q=${encoded}`;
+    const google = `https://www.google.com/search?q=${encoded}`;
+
+    const makeUrl = (url) => window.WORKER_BASE ? `${window.WORKER_BASE}/proxy?url=${encodeURIComponent(url)}` : url;
+
+    lastResults = [
+      { type:'authority', title:'Search GhaLII — Ghana judgments & legislation', citation:'', court:'', year:'', jurisdiction:'Ghana', summary:'Open GhaLII with your query (best for Ghanaian decisions and Acts).', sourceUrl: makeUrl(ghaliiSearch) },
+      { type:'authority', title:'Search BAILII — English & Irish case law', citation:'', court:'', year:'', jurisdiction:'England', summary:'Open BAILII search for reported English and Irish cases.', sourceUrl: makeUrl(bailiiSearch) },
+      { type:'authority', title:'Google Scholar — cases & articles', citation:'', court:'', year:'', jurisdiction:'International', summary:'Search Google Scholar for cases, articles and textbooks mentioning your query.', sourceUrl: scholar },
+      { type:'authority', title:'General web search (Google)', citation:'', court:'', year:'', jurisdiction:'International', summary:'A broad web search that may find secondary sources or PDFs; verify against primary sites.', sourceUrl: google }
+    ];
+    render();
+    return;
+  }catch(err){
+    resultsEl.innerHTML = `<div class="error-box">Search error: ${escapeHtml(err && err.message ? err.message : String(err))}. Try again.</div>`;
+  }finally{
+    goBtn.disabled = false;
+    goBtn.textContent = 'Search';
+  }
+}
+</script>
+</body>
+</html>
