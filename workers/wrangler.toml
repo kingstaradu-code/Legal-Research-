@@ -1,0 +1,8 @@
+name = "legal-research-proxy"
+main = "workers/proxy.js"
+compatibility_date = "2026-08-19"
+
+# Fill these in before using wrangler deploy
+# account_id = ""
+# workers_dev = true
+# route = ""
