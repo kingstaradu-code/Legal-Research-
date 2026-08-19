@@ -143,6 +143,7 @@ document.querySelectorAll('.lookup-form').forEach(formEl => {
   });
 });
 
+// LANDMARKS array (verified entries only)
 const LANDMARKS = [
   { j:'England', s:'Contract', title:'Carlill v Carbolic Smoke Ball Co', citation:'[1893] 1 QB 256', note:'Unilateral offer by advertisement accepted by performance.' },
   { j:'England', s:'Contract', title:'Hadley v Baxendale', citation:'(1854) 9 Exch 341', note:'Remoteness of contractual damages — foreseeability test.' },
@@ -228,62 +229,103 @@ function render(){ const filtered = activeFilter === 'all' ? lastResults : lastR
     </div>
   `).join(''); resultsEl.innerHTML = `<div class="result-count">${filtered.length} result${filtered.length === 1 ? '' : 's'}</div>${cards}`; }
 
+// Attempt to fetch GhaLII/Bailii search results via proxy and extract top anchors
+async function fetchPrimarySearchResults(searchUrl){
+  if (!window.WORKER_BASE) return [];
+  try{
+    const proxyUrl = `${window.WORKER_BASE}/proxy?url=${encodeURIComponent(searchUrl)}`;
+    const res = await fetch(proxyUrl, { method: 'GET' });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const anchors = Array.from(doc.querySelectorAll('a'))
+      .map(a => ({ href: a.href || a.getAttribute('href'), text: a.textContent.trim() }))
+      .filter(a => a.href && /ghalii\.org|bailii\.org/i.test(a.href) && a.text.length > 3);
+    // Deduplicate and return first 8
+    const seen = new Set();
+    const results = [];
+    for (const a of anchors){
+      if (seen.has(a.href)) continue; seen.add(a.href);
+      results.push(a);
+      if (results.length >= 8) break;
+    }
+    return results;
+  }catch(err){ return []; }
+}
+
 // Open a proxied URL in modal or fallback to new tab
-async function viewCase(e, anchor){ e.preventDefault(); const encoded = anchor.getAttribute('data-source'); if (!encoded) return; const url = decodeURIComponent(encoded);
-  // If this is already a worker/proxy URL, fetch it directly
-  if (window.WORKER_BASE && !url.startsWith(window.WORKER_BASE)){
-    // build proxy url
-    await openProxied(url);
-    return;
-  }
-  // If WORKER_BASE not set or url already a proxy, try to fetch and show if CORS allows
-  if (url.startsWith('http')){
-    // If WORKER_BASE available, use proxy
-    if (window.WORKER_BASE){ await openProxied(url); return; }
-    // Fallback: open original in new tab
-    window.open(url, '_blank', 'noopener');
-  } else if (url.startsWith(window.WORKER_BASE)){
-    await openProxied(url);
-  } else {
-    window.open(url, '_blank', 'noopener');
-  }
+async function viewCase(e, anchor){
+  e.preventDefault();
+  const encoded = anchor.getAttribute('data-source'); if (!encoded) return;
+  const url = decodeURIComponent(encoded);
+  if (window.WORKER_BASE){ await openProxied(url); return; }
+  window.open(url, '_blank', 'noopener');
 }
 
 async function openProxied(targetUrl){
   try{
     const proxyUrl = window.WORKER_BASE ? `${window.WORKER_BASE}/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
-    // Show loading
     modalMeta.textContent = 'Loading…'; modalContent.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Loading case text…</div>'; modal.style.display = 'flex';
     const res = await fetch(proxyUrl, { method: 'GET', mode: 'cors' });
     if (!res.ok){ modalMeta.textContent = `Failed to fetch (${res.status})`; modalContent.innerHTML = `<div class="error-box">Failed to fetch case: ${res.status} ${res.statusText}</div>`; return; }
     const text = await res.text();
-    // Basic sanitisation: remove any <script> tags
     const cleaned = text.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
-    // Remove X-Frame-Options & CSP is handled server-side by worker; assume proxied content safe
     modalMeta.textContent = `Source: ${targetUrl}`;
     modalContent.innerHTML = cleaned;
-    // Scroll modalContent to top
     modalContent.scrollTop = 0;
-  }catch(err){
-    modalMeta.textContent = 'Error';
-    modalContent.innerHTML = `<div class="error-box">Could not load case: ${escapeHtml(err && err.message ? err.message : String(err))}</div>`;
-  }
+  }catch(err){ modalMeta.textContent = 'Error'; modalContent.innerHTML = `<div class="error-box">Could not load case: ${escapeHtml(err && err.message ? err.message : String(err))}</div>`; }
 }
 
-// Robust runSearch: local-first, then safe external fallbacks
+// Robust runSearch: local-first, then fetch GhaLII/BAILII via proxy when available, else provide safe external links
 async function runSearch(query){
   goBtn.disabled = true; goBtn.textContent = 'Searching…'; resultsEl.innerHTML = `<div class="status"><span class="dot"></span> Searching for "${escapeHtml(query)}"…</div>`;
   try{
     const q = query.toLowerCase().trim();
+    // 1) Local matches
     const localMatches = LANDMARKS.filter(c => { const hay = (c.title + ' ' + (c.citation||'') + ' ' + (c.s||'') + ' ' + (c.note||'')).toLowerCase(); return hay.includes(q); });
     if (localMatches.length){ lastResults = localMatches.map(c => ({ type: 'case', title: c.title, citation: c.citation || '', court: '', year: '', jurisdiction: c.j, summary: c.note || '', sourceUrl: (c.j === 'Ghana' ? `https://ghalii.org/search/?q=${encodeURIComponent(c.title)}` : `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encodeURIComponent(c.title)}&method=all&results=50`) })); render(); return; }
+
+    // 2) Attempt primary-source searches via proxy (GhaLII prioritized)
     const encoded = encodeURIComponent(query);
-    const bailiiSearch = `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encoded}&method=all&results=50`;
     const ghaliiSearch = `https://ghalii.org/search/?q=${encoded}`;
-    const scholar = `https://scholar.google.com/scholar?q=${encoded}`;
-    const google = `https://www.google.com/search?q=${encoded}`;
+    const bailiiSearch = `https://www.bailii.org/cgi-bin/sino_search_1.cgi?query=${encoded}&method=all&results=50`;
+
+    let ghResults = [];
+    let bailiiResults = [];
+    if (window.WORKER_BASE){
+      ghResults = await fetchPrimarySearchResults(ghaliiSearch);
+      bailiiResults = await fetchPrimarySearchResults(bailiiSearch);
+    }
+
+    // Build lastResults from parsed primary search results when available
+    lastResults = [];
+    if (ghResults.length){
+      for (const g of ghResults.slice(0,6)){
+        lastResults.push({ type:'case', title: g.text, citation:'', court:'', year:'', jurisdiction:'Ghana', summary:'Open full judgment (proxied)', sourceUrl: g.href });
+      }
+    }
+    if (bailiiResults.length){
+      for (const b of bailiiResults.slice(0,6)){
+        lastResults.push({ type:'case', title: b.text, citation:'', court:'', year:'', jurisdiction:'England', summary:'Open full judgment (proxied)', sourceUrl: b.href });
+      }
+    }
+
+    // If we obtained any proxied primary results, render them
+    if (lastResults.length){ render(); return; }
+
+    // Fallback: provide external search links (proxy if available)
     const makeUrl = (url) => window.WORKER_BASE ? `${window.WORKER_BASE}/proxy?url=${encodeURIComponent(url)}` : url;
-    lastResults = [ { type:'authority', title:'Search GhaLII — Ghana judgments & legislation', citation:'', court:'', year:'', jurisdiction:'Ghana', summary:'Open GhaLII with your query (best for Ghanaian decisions and Acts).', sourceUrl: makeUrl(ghaliiSearch) }, { type:'authority', title:'Search BAILII — English & Irish case law', citation:'', court:'', year:'', jurisdiction:'England', summary:'Open BAILII search for reported English and Irish cases.', sourceUrl: makeUrl(bailiiSearch) }, { type:'authority', title:'Google Scholar — cases & articles', citation:'', court:'', year:'', jurisdiction:'International', summary:'Search Google Scholar for cases, articles and textbooks mentioning your query.', sourceUrl: scholar }, { type:'authority', title:'General web search (Google)', citation:'', court:'', year:'', jurisdiction:'International', summary:'A broad web search that may find secondary sources or PDFs; verify against primary sites.', sourceUrl: google } ]; render(); return; }catch(err){ resultsEl.innerHTML = `<div class="error-box">Search error: ${escapeHtml(err && err.message ? err.message : String(err))}. Try again.</div>`; }finally{ goBtn.disabled = false; goBtn.textContent = 'Search'; } }
+    lastResults = [
+      { type:'authority', title:'Search GhaLII — Ghana judgments & legislation', citation:'', court:'', year:'', jurisdiction:'Ghana', summary:'Open GhaLII with your query (best for Ghanaian decisions and Acts).', sourceUrl: makeUrl(ghaliiSearch) },
+      { type:'authority', title:'Search BAILII — English & Irish case law', citation:'', court:'', year:'', jurisdiction:'England', summary:'Open BAILII search for reported English and Irish cases.', sourceUrl: makeUrl(bailiiSearch) },
+      { type:'authority', title:'Google Scholar — cases & articles', citation:'', court:'', year:'', jurisdiction:'International', summary:'Search Google Scholar for cases, articles and textbooks mentioning your query.', sourceUrl: `https://scholar.google.com/scholar?q=${encoded}` },
+      { type:'authority', title:'General web search (Google)', citation:'', court:'', year:'', jurisdiction:'International', summary:'A broad web search that may find secondary sources or PDFs; verify against primary sites.', sourceUrl: `https://www.google.com/search?q=${encoded}` }
+    ];
+    render();
+    return;
+  }catch(err){ resultsEl.innerHTML = `<div class="error-box">Search error: ${escapeHtml(err && err.message ? err.message : String(err))}. Try again.</div>`; }finally{ goBtn.disabled = false; goBtn.textContent = 'Search'; }
+}
 </script>
 </body>
 </html>
